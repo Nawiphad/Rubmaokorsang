@@ -216,6 +216,7 @@
             
             <div class="control-bar">
                 <span class="status-text" id="heartsStatus">❤️ 3</span>
+                <span class="status-text" id="progressStatus">📚 0/44</span>
                 <div style="display: flex; gap: 15px;">
                     <button class="next-btn" id="nextButton">⏩ ต่อไป</button>
                     <button class="next-btn restart-btn" id="restartButton">🔄 เริ่มใหม่</button>
@@ -288,6 +289,7 @@
             let roundConsonant = null;
             let usedIndices = [];
             let waitingForNext = false;
+            let knownConsonants = new Set();
 
             // DOM elements
             const consonantDisplay = document.getElementById('currentConsonant');
@@ -297,6 +299,7 @@
             const restartButton = document.getElementById('restartButton');
             const heartDisplay = document.getElementById('heartDisplay');
             const heartsStatus = document.getElementById('heartsStatus');
+            const progressStatus = document.getElementById('progressStatus');
             const gameoverMsg = document.getElementById('gameoverMessage');
 
             // Update hearts
@@ -308,18 +311,36 @@
                 heartsStatus.innerHTML = `❤️ ${currentLives}`;
             }
 
-            // pick random consonant (no immediate repeat)
+            // Update progress counter
+            function updateProgressUI() {
+                const known = knownConsonants.size;
+                const total = THAI_CONSONANTS.length;
+                progressStatus.innerHTML = `📚 ${known}/${total}`;
+            }
+
+            // pick random consonant (no immediate repeat, skip known)
             function pickRandomConsonant() {
-                if (usedIndices.length >= THAI_CONSONANTS.length) {
+                // Get all consonants that are NOT known yet
+                const unknownIndices = [];
+                for (let i = 0; i < THAI_CONSONANTS.length; i++) {
+                    if (!knownConsonants.has(THAI_CONSONANTS[i].char)) {
+                        unknownIndices.push(i);
+                    }
+                }
+                
+                // If all have been learned, show them all again
+                if (unknownIndices.length === 0) {
+                    return Math.floor(Math.random() * THAI_CONSONANTS.length);
+                }
+                
+                // Filter out from recently used to avoid immediate repeat
+                let available = unknownIndices.filter(i => !usedIndices.includes(i));
+                
+                if (available.length === 0) {
+                    available = unknownIndices;
                     usedIndices = [];
                 }
-                let available = [];
-                for (let i = 0; i < THAI_CONSONANTS.length; i++) {
-                    if (!usedIndices.includes(i)) available.push(i);
-                }
-                if (available.length === 0) {
-                    available = [Math.floor(Math.random() * THAI_CONSONANTS.length)];
-                }
+                
                 const randomIdx = Math.floor(Math.random() * available.length);
                 const selectedIdx = available[randomIdx];
                 usedIndices.push(selectedIdx);
@@ -423,6 +444,10 @@
                 if (isCorrect) {
                     correctionNote.innerHTML = `✅ ถูกต้อง! ${roundConsonant.char} · ${roundConsonant.karaoke}`;
                     
+                    // Mark as known
+                    knownConsonants.add(roundConsonant.char);
+                    updateProgressUI();
+                    
                     if (roundConsonant.char === 'อ') {
                         correctionNote.innerHTML += `<span style="color:#6a3e03;"> (aw ang) </span>`;
                     }
@@ -480,6 +505,8 @@
             function restartGame() {
                 currentLives = 3;
                 updateHeartsUI();
+                knownConsonants.clear();
+                updateProgressUI();
                 gameActive = true;
                 answerLocked = false;
                 mistakeThisRound = false;
@@ -500,6 +527,7 @@
                 gameActive = true;
                 currentLives = 3;
                 updateHeartsUI();
+                updateProgressUI();
                 usedIndices = [];
                 loadNewConsonant();
             });
