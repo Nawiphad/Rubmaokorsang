@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubmaokorsang · Thai Consonant Drill (Karaoke Choices)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Noto Sans Thai', 'Tahoma', system-ui, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #1a2639 0%, #2c3e50 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        .game-container {
+            max-width: 1100px;
+            width: 100%;
+            background: #fef9e8;
+            background-image: radial-gradient(circle at 10% 30%, rgba(255,243,188,0.3) 0%, transparent 25%);
+            border-radius: 64px 64px 48px 48px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+            padding: 2rem 2rem 3rem;
+            border-bottom: 8px solid #b9935c;
+        }
+        .welcome-content {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        .welcome-title {
+            color: #2d2010;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nickname-input {
+            font-size: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: 3px solid #c49a6c;
+            text-align: center;
+            margin: 2rem 0;
+            width: 80%;
+            max-width: 300px;
+            outline: none;
+            background: #fff8e7;
+        }
+        .nickname-input:focus {
+            border-color: #8b6b4b;
+        }
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2d2010;
+            padding: 0.6rem 2rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            color: #ffde9e;
+            border: 2px solid #ebc06f;
+            box-shadow: inset 0 -2px 0 #4a3a1e;
+        }
+        .team-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            text-shadow: 3px 3px 0 #5e3a1c;
+            word-break: break-word;
+        }
+        .heart-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 2.2rem;
+        }
+        .streak-display {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #4d2e1b;
+            margin-bottom: 1.5rem;
+            background: #ffe0b5;
+            padding: 0.5rem;
+            border-radius: 20px;
+            border: 2px dashed #c49a6c;
+        }
+        .drill-area {
+            background: #fff8e7;
+            border-radius: 60px 60px 40px 40px;
+            padding: 2rem 1.5rem;
+            box-shadow: inset 0 -6px 0 #c0a080, inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .consonant-display {
+            font-size: 12rem;
+            text-align: center;
+            line-height: 1;
+            padding: 0.2rem;
+            margin: 0.5rem 0 1rem 0;
+            color: #1e1e2a;
+            text-shadow: 6px 6px 0 #e6d5b8, 8px 8px 10px rgba(0,0,0,0.2);
+            font-weight: 550;
+            letter-spacing: 0.5rem;
+        }
+        .mistake-note {
+            background: #ffe0b5;
+            border-radius: 30px;
+            padding: 0.8rem;
+            text-align: center;
+            margin: 1rem 0 0.2rem;
+            font-style: italic;
+            border-left: 8px solid #cb6e6e;
+            color: #4d2e1b;
+            font-size: 1.3rem;
+            font-weight: 500;
+            min-height: 4.5rem;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin: 2rem 0 1rem;
+        }
+        .choice-btn {
+            background: #f4e5c7;
+            border: 4px solid #c49a6c;
+            border-radius: 50px;
+            padding: 1rem 0.8rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #27190e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: 0.1s ease;
+            box-shadow: 0 7px 0 #8b6b4b, 0 10px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            line-height: 1.2;
+            word-break: break-word;
+            text-transform: lowercase;
+        }
+        .choice-btn:first-letter {
+            text-transform: uppercase;
+        }
+        .choice-btn:hover {
+            background: #ffefcf;
+            border-color: #b3824a;
+            transform: translateY(3px);
+            box-shadow: 0 4px 0 #6b4f37, 0 12px 16px rgba(0,0,0,0.1);
+        }
+        .choice-btn:active {
+            transform: translateY(7px);
+            box-shadow: 0 1px 0 #5a3f2c;
+        }
+        .disabled-btn, .choice-btn:disabled {
+            opacity: 0.45;
+            pointer-events: none;
+            transform: none;
+            box-shadow: 0 4px 0 #6b4f37;
+            filter: grayscale(0.7);
+        }
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .next-btn {
+            background: #4f6d7f;
+            border: none;
+            padding: 0.8rem 2.2rem;
+            border-radius: 40px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #fcf3e0;
+            border-bottom: 8px solid #2c4a5c;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: 0.07s;
+            box-shadow: 0 5px 10px #00000033;
+        }
+        .next-btn:hover {
+            background: #618b9e;
+            border-bottom-width: 5px;
+            transform: translateY(3px);
+        }
+        .next-btn:active {
+            transform: translateY(7px);
+            border-bottom-width: 2px;
+        }
+        .restart-btn {
+            background: #d9af6b;
+            border-bottom: 8px solid #8f6a3c;
+            color: #25201a;
+            padding: 0.8rem 1.8rem;
+            font-size: 1.3rem;
+        }
+        .gameover-message {
+            background: #1f1a15;
+            color: #ffeaa5;
+            padding: 1rem;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            border: 3px solid #e6b422;
+        }
+        .footer-small {
+            margin-top: 1.2rem;
+            color: #4f4233;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .status-text {
+            font-size: 1.3rem;
+            background: #e7dcc0;
+            padding: 0.5rem 1.8rem;
+            border-radius: 30px;
+            border: 2px solid #ba9b6b;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcomeScreen" class="game-container">
+        <div class="welcome-content">
+            <h2 style="color: #6b4f37; margin-bottom: 0;">CSII Team X presents</h2>
+            <h1 class="welcome-title">Thai Consonants</h1>
+            <input type="text" id="nicknameInput" class="nickname-input" placeholder="nickname">
+            <br>
+            <button class="next-btn" id="startQuizBtn" style="font-size: 1.8rem; padding: 1rem 3rem;">Start Quiz</button>
+        </div>
+    </div>
+
+    <div id="gameScreen" class="game-container" style="display: none;">
+        <div class="team-header">
+            <span class="team-name">🐘 RUBMAOKORSANG</span>
+            <div class="heart-row" id="heartDisplay">❤️❤️❤️</div>
+        </div>
+
+        <div class="streak-display" id="streakDisplay"></div>
+
+        <div class="drill-area">
+            <div class="consonant-display" id="currentConsonant">ก</div>
+            <div id="correctionNote" class="mistake-note"></div>
+            <div class="options-grid" id="optionsContainer"></div>
+            
+            <div class="control-bar">
+                <span class="status-text" id="heartsStatus">❤️ 3</span>
+                <span class="status-text" id="progressStatus">📚 0/44</span>
+                <div style="display: flex; gap: 15px;">
+                    <button class="next-btn" id="nextButton">⏩ ต่อไป</button>
+                    <button class="next-btn restart-btn" id="restartButton">🔄 เริ่มใหม่</button>
+                </div>
+            </div>
+            <div id="gameoverMessage" class="gameover-message" style="display: none;">💔 GAME OVER 💔</div>
+        </div>
+        <div class="footer-small">
+            รู้จัก 44 อักษรไทย · เลือกคำอ่านคาราโอเกะ · Rubmaokorsang team
+        </div>
+    </div>
+
+    <script>
+        // --- BACKEND SETUP ---
+        // Change YOURSITE to your actual Render site prefix!
+        const BACKEND_URL = "https://YOURSITE-service.onrender.com";
+
+        (function(){
+            const THAI_CONSONANTS = [
+                { char: "ก", karaoke: "gaw gai" },
+                { char: "ข", karaoke: "khaw khai" },
+                { char: "ฃ", karaoke: "khaw khuat" },
+                { char: "ค", karaoke: "khaw khwai" },
+                { char: "ฅ", karaoke: "khaw khon" },    
+                { char: "ฆ", karaoke: "khaw ra-khang" },
+                { char: "ง", karaoke: "ngaw ngu" },
+                { char: "จ", karaoke: "jaw jaan" },
+                { char: "ฉ", karaoke: "chaw ching" },
+                { char: "ช", karaoke: "chaw chang" },
+                { char: "ซ", karaoke: "saw so" },
+                { char: "ฌ", karaoke: "chaw choe" },
+                { char: "ญ", karaoke: "yaw ying" },
+                { char: "ฎ", karaoke: "daw cha-da" },
+                { char: "ฏ", karaoke: "dtaw pa-tak" },
+                { char: "ฐ", karaoke: "thaw than" },
+                { char: "ฑ", karaoke: "thaw mon-tho" },
+                { char: "ฒ", karaoke: "thaw phu-thao" },
+                { char: "ณ", karaoke: "naw nayn" },
+                { char: "ด", karaoke: "daw dek" },
+                { char: "ต", karaoke: "dtaw tao" },
+                { char: "ถ", karaoke: "thaw thung" },
+                { char: "ท", karaoke: "thaw thahan" },
+                { char: "ธ", karaoke: "thaw thong" },
+                { char: "น", karaoke: "naw nu" },
+                { char: "บ", karaoke: "baw bai-mai" },
+                { char: "ป", karaoke: "bpaw bpla" },
+                { char: "ผ", karaoke: "phaw phueng" },
+                { char: "ฝ", karaoke: "faw fa" },
+                { char: "พ", karaoke: "phaw phan" },
+                { char: "ฟ", karaoke: "faw fan" },
+                { char: "ภ", karaoke: "phaw sam-phao" },
+                { char: "ม", karaoke: "maw ma" },
+                { char: "ย", karaoke: "yaw yak" },
+                { char: "ร", karaoke: "raw ruea" },
+                { char: "ล", karaoke: "law ling" },
+                { char: "ว", karaoke: "waw waen" },
+                { char: "ศ", karaoke: "saw sa-la" },
+                { char: "ษ", karaoke: "saw rue-si" },
+                { char: "ส", karaoke: "saw suea" },
+                { char: "ห", karaoke: "haw hip" },
+                { char: "ฬ", karaoke: "law ju-la" },
+                { char: "อ", karaoke: "aw ang" },       
+                { char: "ฮ", karaoke: "haw nok-huk" }
+            ];
+
+            let currentLives = 3;
+            let currentConsonantIndex = 0;
+            let gameActive = false;
+            let answerLocked = false;
+            let mistakeThisRound = false;
+            let roundConsonant = null;
+            let usedIndices = [];
+            let waitingForNext = false;
+            let knownConsonants = new Set();
+            let currentNickname = "";
+
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const gameScreen = document.getElementById('gameScreen');
+            const startQuizBtn = document.getElementById('startQuizBtn');
+            const nicknameInput = document.getElementById('nicknameInput');
+            const streakDisplay = document.getElementById('streakDisplay');
+
+            const consonantDisplay = document.getElementById('currentConsonant');
+            const correctionNote = document.getElementById('correctionNote');
+            const optionsContainer = document.getElementById('optionsContainer');
+            const nextButton = document.getElementById('nextButton');
+            const restartButton = document.getElementById('restartButton');
+            const heartDisplay = document.getElementById('heartDisplay');
+            const heartsStatus = document.getElementById('heartsStatus');
+            const progressStatus = document.getElementById('progressStatus');
+            const gameoverMsg = document.getElementById('gameoverMessage');
+
+            // --- WELCOME SCREEN LOGIC ---
+            startQuizBtn.addEventListener('click', async () => {
+                const nickname = nicknameInput.value.trim();
+                if (!nickname) {
+                    alert("Please enter a nickname!");
+                    return;
+                }
+                
+                currentNickname = nickname;
+                // Set default in case the fetch fails
+                streakDisplay.innerText = `${nickname} — Starts: 1`;
+                
+                // Hide welcome screen and show drill
+                welcomeScreen.style.display = 'none';
+                gameScreen.style.display = 'block';
+
+                try {
+                    // Call the backend to increment the counter
+                    const response = await fetch(`${BACKEND_URL}/api/quiz/start`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ nickname: nickname })
+                    });
+                    
+                    if(response.ok) {
+                        const data = await response.json();
+                        // Update the UI with actual server data
+                        streakDisplay.innerText = `${data.user.nickname} — Starts: ${data.user.starts}`;
+                    }
+                } catch (error) {
+                    console.error("Error connecting to backend:", error);
+                }
+
+                startGame();
+            });
+
+            function startGame() {
+                gameActive = true;
+                currentLives = 3;
+                updateHeartsUI();
+                updateProgressUI();
+                usedIndices = [];
+                knownConsonants.clear();
+                loadNewConsonant();
+            }
+
+            function updateHeartsUI() {
+                let hearts = '';
+                for (let i = 0; i < currentLives; i++) hearts += '❤️';
+                for (let i = currentLives; i < 3; i++) hearts += '🖤';
+                heartDisplay.innerHTML = hearts;
+                heartsStatus.innerHTML = `❤️ ${currentLives}`;
+            }
+
+            function updateProgressUI() {
+                const known = knownConsonants.size;
+                const total = THAI_CONSONANTS.length;
+                progressStatus.innerHTML = `📚 ${known}/${total}`;
+            }
+
+            function pickRandomConsonant() {
+                const unknownIndices = [];
+                for (let i = 0; i < THAI_CONSONANTS.length; i++) {
+                    if (!knownConsonants.has(THAI_CONSONANTS[i].char)) {
+                        unknownIndices.push(i);
+                    }
+                }
+                
+                if (unknownIndices.length === 0) {
+                    return Math.floor(Math.random() * THAI_CONSONANTS.length);
+                }
+                
+                let available = unknownIndices.filter(i => !usedIndices.includes(i));
+                
+                if (available.length === 0) {
+                    available = unknownIndices;
+                    usedIndices = [];
+                }
+                
+                const randomIdx = Math.floor(Math.random() * available.length);
+                const selectedIdx = available[randomIdx];
+                usedIndices.push(selectedIdx);
+                return selectedIdx;
+            }
+
+            function loadNewConsonant() {
+                if (!gameActive) return;
+                if (currentLives <= 0) {
+                    gameActive = false;
+                    answerLocked = true;
+                    waitingForNext = false;
+                    gameoverMsg.style.display = 'block';
+                    consonantDisplay.style.opacity = '0.5';
+                    return;
+                }
+
+                gameoverMsg.style.display = 'none';
+                consonantDisplay.style.opacity = '1';
+                
+                const newIdx = pickRandomConsonant();
+                currentConsonantIndex = newIdx;
+                roundConsonant = THAI_CONSONANTS[newIdx];
+                
+                consonantDisplay.textContent = roundConsonant.char;
+                correctionNote.innerHTML = ''; 
+                
+                answerLocked = false;
+                mistakeThisRound = false;
+                waitingForNext = false;
+                
+                generateOptions(roundConsonant);
+            }
+
+            function generateOptions(correctCons) {
+                let otherCons = THAI_CONSONANTS.filter(c => c.char !== correctCons.char);
+                let shuffled = [...otherCons].sort(() => Math.random() - 0.5);
+                let wrongOptions = [];
+                for (let i = 0; i < 3; i++) {
+                    if (shuffled[i]) wrongOptions.push(shuffled[i]);
+                }
+                while (wrongOptions.length < 3) {
+                    wrongOptions.push(THAI_CONSONANTS[Math.floor(Math.random() * THAI_CONSONANTS.length)]);
+                }
+                
+                let choices = [
+                    { cons: correctCons, isCorrect: true },
+                    { cons: wrongOptions[0], isCorrect: false },
+                    { cons: wrongOptions[1], isCorrect: false },
+                    { cons: wrongOptions[2], isCorrect: false }
+                ];
+                
+                for (let i = choices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [choices[i], choices[j]] = [choices[j], choices[i]];
+                }
+                renderOptionButtons(choices);
+            }
+
+            function renderOptionButtons(choices) {
+                optionsContainer.innerHTML = '';
+                choices.forEach((choice) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.setAttribute('data-char', choice.cons.char);
+                    btn.setAttribute('data-correct', choice.isCorrect);
+                    btn.innerHTML = `${choice.cons.karaoke}`;
+                    
+                    if (!gameActive || answerLocked || currentLives <= 0) {
+                        btn.disabled = true;
+                        btn.classList.add('disabled-btn');
+                    }
+                    
+                    btn.addEventListener('click', function(e) {
+                        if (!gameActive || answerLocked || currentLives <= 0) return;
+                        handleAnswerClick(choice.isCorrect, choice.cons);
+                    });
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            function handleAnswerClick(isCorrect, selectedCons) {
+                if (!gameActive || answerLocked || currentLives <= 0) return;
+                
+                answerLocked = true;
+                waitingForNext = true;
+                
+                const allBtns = document.querySelectorAll('.choice-btn');
+                allBtns.forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.add('disabled-btn');
+                });
+
+                if (isCorrect) {
+                    correctionNote.innerHTML = `✅ ถูกต้อง! ${roundConsonant.char} · ${roundConsonant.karaoke}`;
+                    knownConsonants.add(roundConsonant.char);
+                    updateProgressUI();
+                    
+                    if (roundConsonant.char === 'อ') {
+                        correctionNote.innerHTML += `<span style="color:#6a3e03;"> (aw ang) </span>`;
+                    }
+                } else {
+                    if (currentLives > 0) {
+                        currentLives -= 1;
+                        updateHeartsUI();
+                    }
+                    mistakeThisRound = true;
+                    
+                    let mistakeMsg = `❌ เลือกผิด: "${selectedCons.karaoke}" `;
+                    mistakeMsg += `· ที่ถูกต้อง: "${roundConsonant.karaoke}" (${roundConsonant.char})`;
+                    correctionNote.innerHTML = mistakeMsg;
+                    
+                    if (roundConsonant.char === 'อ') {
+                        correctionNote.innerHTML += `<br/>🔹 อ aw ang`;
+                    }
+                    if (selectedCons.char === 'อ' && !isCorrect) {
+                        correctionNote.innerHTML += `<br/>📘 อ aw ang`;
+                    }
+                }
+
+                if (currentLives <= 0) {
+                    gameActive = false;
+                    gameoverMsg.style.display = 'block';
+                    consonantDisplay.style.opacity = '0.5';
+                }
+            }
+
+            function nextConsonantAction() {
+                if (!gameActive) {
+                    if (currentLives <= 0) {
+                        correctionNote.innerHTML = '💀 เกมจบแล้ว กด "เริ่มใหม่"';
+                    }
+                    return;
+                }
+                if (!waitingForNext) {
+                    correctionNote.innerHTML = '⚠️ กรุณาเลือกคำตอบก่อน (choose an answer)';
+                    return;
+                }
+                if (currentLives > 0 && gameActive) {
+                    loadNewConsonant();
+                }
+            }
+
+            function restartGame() {
+                currentLives = 3;
+                updateHeartsUI();
+                knownConsonants.clear();
+                updateProgressUI();
+                gameActive = true;
+                answerLocked = false;
+                mistakeThisRound = false;
+                waitingForNext = false;
+                usedIndices = [];
+                gameoverMsg.style.display = 'none';
+                consonantDisplay.style.opacity = '1';
+                loadNewConsonant();
+                correctionNote.innerHTML = '';
+                
+                // Note: The streak counter usually only increments when logging in / starting a session
+                // so we don't recall the start API endpoint on 'restart game' mid-session.
+            }
+
+            nextButton.addEventListener('click', nextConsonantAction);
+            restartButton.addEventListener('click', restartGame);
+        })();
+    </script>
+</body>
+</html>
